@@ -1,16 +1,12 @@
-/* XCompose — injected bar + toast — X monochrome + blue accent */
 :root {
-  --xcompose-bg: #000000;
   --xcompose-surface: #0f0f0f;
-  --xcompose-surface-hover: #16181c;
+  --xcompose-hover: #16181c;
   --xcompose-border: #2f3336;
   --xcompose-border-strong: #3a3f45;
   --xcompose-text: #e7e9ea;
   --xcompose-muted: #71767b;
   --xcompose-blue: #1d9bf0;
   --xcompose-blue-hover: #1a8cd8;
-  --xcompose-blue-press: #1570a6;
-  --xcompose-radius: 9999px;
   --xcompose-radius-card: 12px;
 }
 
@@ -20,100 +16,83 @@
   gap: 6px;
   flex-wrap: wrap;
   padding: 7px 8px;
-  margin: 10px 0 8px 0;
+  margin: 10px 0 8px;
   background: var(--xcompose-surface);
   border: 1px solid var(--xcompose-border);
   border-radius: var(--xcompose-radius-card);
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 40%);
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 13px;
   line-height: 1;
   color: var(--xcompose-text);
-  position: relative;
-  z-index: 5;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
   max-width: 100%;
-  -webkit-font-smoothing: antialiased;
+  z-index: 5;
 }
 
-.xcompose-bar.loading {
-  opacity: 0.97;
+.xcompose-bar.busy .xcompose-btn {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
-.xcompose-brand {
+.xcompose-brand,
+.xcompose-btn,
+.xcompose-dropdown-item {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 8px 5px 6px;
-  border-radius: var(--xcompose-radius);
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--xcompose-text);
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-  user-select: none;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
-}
-.xcompose-brand:hover {
-  background: #1a1a1a;
-  border-color: var(--xcompose-border);
-}
-.xcompose-brand:active {
-  transform: scale(0.98);
-}
-.xcompose-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--xcompose-blue);
-  box-shadow: 0 0 0 4px rgba(29, 155, 240, 0.18);
-  display: inline-block;
-  flex-shrink: 0;
-}
-.xcompose-brand-text {
-  line-height: 1;
-}
-
-.xcompose-divider {
-  width: 1px;
-  height: 18px;
-  background: var(--xcompose-border);
-  margin: 0 2px;
-  flex-shrink: 0;
-}
-
-.xcompose-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6.5px 12px;
-  border-radius: var(--xcompose-radius);
-  border: 1px solid var(--xcompose-border);
-  background: #000;
-  color: var(--xcompose-text);
-  font-weight: 600;
+  font-family: inherit;
   font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--xcompose-text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 9999px;
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
   transition:
     background 0.14s,
     border-color 0.14s,
-    color 0.14s,
-    transform 0.08s,
-    opacity 0.14s;
+    transform 0.08s;
+}
+
+.xcompose-btn svg,
+.xcompose-brand svg,
+.xcompose-dropdown-item svg,
+.xcompose-icon-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.xcompose-brand {
+  padding: 5px 7px;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.xcompose-brand svg {
+  width: 13px;
+  height: 13px;
+  color: var(--xcompose-muted);
+}
+.xcompose-brand:hover {
+  background: var(--xcompose-hover);
+}
+
+.xcompose-btn {
+  padding: 6.5px 12px;
+  border-color: var(--xcompose-border);
+  background: #000;
 }
 .xcompose-btn:hover {
-  background: var(--xcompose-surface-hover);
+  background: var(--xcompose-hover);
   border-color: var(--xcompose-border-strong);
 }
 .xcompose-btn:active {
   transform: scale(0.97);
-  background: #1e1e1e;
 }
 .xcompose-btn.primary {
   background: var(--xcompose-blue);
@@ -125,42 +104,31 @@
   background: var(--xcompose-blue-hover);
   border-color: var(--xcompose-blue-hover);
 }
-.xcompose-btn.primary:active {
-  background: var(--xcompose-blue-press);
-}
-.xcompose-btn:disabled {
-  cursor: wait;
-}
-.xcompose-btn.is-loading {
-  position: relative;
-  pointer-events: none;
-}
-.xcompose-btn-icon {
-  font-size: 11px;
-  line-height: 1;
-  opacity: 0.95;
-}
-.xcompose-btn-label {
-  line-height: 1;
-}
 
-.xcompose-more-wrap {
+.xcompose-more {
   position: relative;
   display: inline-flex;
 }
+.xcompose-more summary {
+  list-style: none;
+  display: inline-flex;
+}
+.xcompose-more summary::-webkit-details-marker {
+  display: none;
+}
+.xcompose-more[open] summary {
+  background: var(--xcompose-hover);
+  border-color: var(--xcompose-border-strong);
+}
 .xcompose-more-btn {
-  padding: 6.5px 10px;
-  min-width: 30px;
+  min-width: 32px;
   justify-content: center;
-  font-weight: 700;
   color: var(--xcompose-muted);
 }
 .xcompose-more-btn:hover {
   color: var(--xcompose-text);
 }
-.xcompose-more-btn[aria-expanded="true"] {
-  background: var(--xcompose-surface-hover);
-  border-color: var(--xcompose-border-strong);
+.xcompose-more[open] .xcompose-more-btn {
   color: var(--xcompose-text);
 }
 
@@ -168,50 +136,32 @@
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  min-width: 172px;
-  background: #0a0a0a;
-  border: 1px solid var(--xcompose-border);
-  border-radius: 12px;
+  min-width: 150px;
   padding: 6px;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  box-shadow:
-    0 10px 28px rgba(0, 0, 0, 0.6),
-    0 2px 6px rgba(0, 0, 0, 0.5);
+  background: #0a0a0a;
+  border: 1px solid var(--xcompose-border);
+  border-radius: 12px;
+  box-shadow: 0 10px 28px rgb(0 0 0 / 60%);
   z-index: 20;
 }
-.xcompose-dropdown.hidden {
-  display: none;
-}
 .xcompose-dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   padding: 8px 10px;
   border-radius: 8px;
   border: none;
-  background: transparent;
-  color: var(--xcompose-text);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  text-align: left;
   width: 100%;
-  transition: background 0.12s;
+  text-align: left;
 }
 .xcompose-dropdown-item:hover {
-  background: #16181c;
-}
-.xcompose-dropdown-item:active {
-  background: #1e2328;
+  background: var(--xcompose-hover);
 }
 
 .xcompose-status {
   font-size: 12px;
   color: var(--xcompose-muted);
-  margin-left: 2px;
-  max-width: 160px;
+  max-width: 170px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -228,77 +178,28 @@
   background: #000;
   color: var(--xcompose-muted);
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.14s;
   flex-shrink: 0;
+  transition: all 0.14s;
 }
 .xcompose-icon-btn:hover {
-  background: var(--xcompose-surface-hover);
+  background: var(--xcompose-hover);
   color: var(--xcompose-text);
   border-color: var(--xcompose-border-strong);
 }
 
-/* Toast */
-.xcompose-toast-container {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  z-index: 2147483647;
-  pointer-events: none;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-.xcompose-toast {
-  background: #000;
-  color: var(--xcompose-text);
-  border: 1px solid var(--xcompose-border);
-  border-radius: var(--xcompose-radius);
-  padding: 10px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  transform: translateY(8px) scale(0.98);
-  transition:
-    opacity 0.22s,
-    transform 0.22s;
-  max-width: 420px;
-  text-align: center;
-  line-height: 1.35;
-  pointer-events: auto;
-}
-.xcompose-toast.in {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-.xcompose-toast--success {
-  border-color: rgba(29, 155, 240, 0.5);
-  background: #0b141b;
-}
-.xcompose-toast--error {
-  border-color: rgba(255, 122, 122, 0.35);
-  background: #1a0f0f;
-  color: #ffd1d1;
-}
-.xcompose-toast--info {
-  background: #0f0f0f;
-}
-
-/* Light mode adapt (X light = white bg) — still readable */
 @media (prefers-color-scheme: light) {
-  :root {
-    --xcompose-border: #d6d9dc;
+  .xcompose-bar {
+    background: #f7f9f9;
+    border-color: #e1e8ed;
+    color: #0f1419;
   }
-}
-
-/* X light theme override: detect if page is light via html background */
-html[style*="background-color: rgb(255, 255, 255)"] .xcompose-bar,
-body.light .xcompose-bar {
-  background: #f7f9f9;
-  border-color: #e1e8ed;
-  color: #0f1419;
+  .xcompose-btn {
+    background: transparent;
+  }
+  .xcompose-btn:hover {
+    background: #eceff1;
+  }
+  .xcompose-dropdown {
+    background: #fff;
+  }
 }

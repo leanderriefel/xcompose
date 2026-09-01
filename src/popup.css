@@ -7,19 +7,23 @@ body {
   padding: 0;
 }
 body {
-  width: 340px;
+  width: 320px;
   background: #000;
   color: #e7e9ea;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-.popup {
-  padding: 16px;
+.popup-root,
+#root > * {
+  display: block;
+}
+#root {
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  background: #000;
+  gap: 12px;
 }
+
 .popup-head {
   display: flex;
   align-items: center;
@@ -35,19 +39,12 @@ body {
   height: 8px;
   border-radius: 50%;
   background: #1d9bf0;
-  box-shadow: 0 0 0 5px rgba(29, 155, 240, 0.16);
-  display: inline-block;
+  box-shadow: 0 0 0 5px rgb(29 155 240 / 16%);
 }
 .brand-name {
   font-weight: 800;
   font-size: 15px;
   letter-spacing: -0.02em;
-}
-.ver {
-  font-size: 11px;
-  color: #71767b;
-  font-weight: 600;
-  margin-left: 2px;
 }
 .icon-btn {
   width: 30px;
@@ -59,7 +56,6 @@ body {
   cursor: pointer;
   display: grid;
   place-items: center;
-  font-size: 14px;
   transition: all 0.15s;
 }
 .icon-btn:hover {
@@ -67,12 +63,16 @@ body {
   color: #e7e9ea;
   border-color: #3a3f45;
 }
+.icon-btn svg {
+  width: 14px;
+  height: 14px;
+}
 
 .card {
   background: #0f0f0f;
   border: 1px solid #2f3336;
   border-radius: 14px;
-  padding: 13px 13px 11px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -91,15 +91,11 @@ body {
 }
 .status-dot.ok {
   background: #00ba7c;
-  box-shadow: 0 0 0 4px rgba(0, 186, 124, 0.18);
+  box-shadow: 0 0 0 4px rgb(0 186 124 / 18%);
 }
 .status-dot.warn {
   background: #ffd400;
-  box-shadow: 0 0 0 4px rgba(255, 212, 0, 0.18);
-}
-.status-dot.bad {
-  background: #f4212e;
-  box-shadow: 0 0 0 4px rgba(244, 33, 46, 0.18);
+  box-shadow: 0 0 0 4px rgb(255 212 0 / 18%);
 }
 .status-text {
   font-weight: 700;
@@ -109,9 +105,7 @@ body {
 .pill {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.02em;
   text-transform: uppercase;
-  background: #000;
   border: 1px solid #2f3336;
   color: #71767b;
   padding: 3px 7px;
@@ -119,8 +113,8 @@ body {
 }
 .pill.live {
   color: #1d9bf0;
-  border-color: rgba(29, 155, 240, 0.35);
-  background: rgba(29, 155, 240, 0.08);
+  border-color: rgb(29 155 240 / 35%);
+  background: rgb(29 155 240 / 8%);
 }
 .model-row {
   display: flex;
@@ -129,51 +123,29 @@ body {
   gap: 10px;
   border-top: 1px solid #1f2326;
   padding-top: 8px;
-  margin-top: 2px;
 }
 .muted {
   color: #71767b;
 }
-.small {
-  font-size: 11px;
-}
 .model {
   font-size: 12px;
   font-weight: 600;
-  color: #e7e9ea;
-  text-align: right;
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 190px;
-}
-.hint {
-  font-size: 11.5px;
-  line-height: 1.35;
-  color: #8a8f94;
-  min-height: 0;
-}
-.hint.error {
-  color: #ff7a7a;
-}
-.hint.ok {
-  color: #9be7c4;
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
-}
 .btn {
-  flex: 1;
   padding: 10px 12px;
   border-radius: 9999px;
   border: 1px solid #2f3336;
   font-weight: 700;
   font-size: 13px;
   cursor: pointer;
+  background: #000;
+  color: #e7e9ea;
   transition: all 0.14s;
-  text-align: center;
 }
 .btn.primary {
   background: #1d9bf0;
@@ -182,62 +154,21 @@ body {
 }
 .btn.primary:hover {
   background: #1a8cd8;
-  border-color: #1a8cd8;
-}
-.btn.primary:active {
-  background: #1570a6;
-}
-.btn.ghost {
-  background: #000;
-  color: #e7e9ea;
-}
-.btn.ghost:hover {
-  background: #16181c;
-  border-color: #3a3f45;
 }
 
-.mini-help {
-  background: #0a0a0a;
-  border: 1px solid #1f2326;
-  border-radius: 12px;
-  padding: 10px 12px;
-  font-size: 12px;
-  line-height: 1.45;
-  color: #c9ced1;
-}
-.mini-help.hidden {
-  display: none;
-}
-.mini-help p {
-  margin: 0 0 8px;
-}
-.mini-help p:last-child {
+.hint {
   margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #71767b;
 }
-.mini-help kbd {
+kbd {
   background: #16181c;
   border: 1px solid #2f3336;
-  border-bottom-width: 2px;
-  padding: 1px 5px;
   border-radius: 5px;
+  padding: 1px 5px;
   font-size: 10px;
   font-weight: 700;
+  font-family: ui-monospace, Menlo, monospace;
   color: #e7e9ea;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
-.foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 2px;
-}
-.link {
-  color: #71767b;
-  text-decoration: none;
-  font-weight: 600;
-}
-.link:hover {
-  color: #1d9bf0;
-  text-decoration: underline;
 }

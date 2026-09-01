@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "XCompose",
-  "version": "0.1.0",
-  "description": "Minimal AI helper inside X/Twitter compose — fix grammar, shorten, punchier. BYOK: OpenAI, Anthropic, OpenRouter, OpenCode.",
+  "version": "0.2.0",
+  "description": "AI buttons for the X compose box. Bring your own key.",
   "permissions": ["storage"],
   "host_permissions": [
     "https://x.com/*",
@@ -11,8 +11,7 @@
     "https://*.twitter.com/*",
     "https://api.openai.com/*",
     "https://api.anthropic.com/*",
-    "https://openrouter.ai/*",
-    "https://*/*"
+    "https://openrouter.ai/*"
   ],
   "background": {
     "service_worker": "src/background.ts",

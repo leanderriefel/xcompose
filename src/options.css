@@ -424,3 +424,42 @@ kbd {
   align-items: center;
   padding: 6px 2px;
 }
+
+.checks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 4px 14px;
+  margin-top: 10px;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #c9ced1;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.check:hover {
+  background: #111315;
+}
+.check input {
+  accent-color: #1d9bf0;
+  margin: 0;
+}
+.check-icon {
+  display: inline-flex;
+  color: #71767b;
+}
+.check-icon svg {
+  width: 14px;
+  height: 14px;
+}
+summary.prompt-head {
+  list-style: none;
+}
+summary.prompt-head::-webkit-details-marker {
+  display: none;
+}

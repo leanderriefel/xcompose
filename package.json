@@ -1,18 +1,18 @@
 {
   "name": "xcompose",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Minimal AI writing assistant for X/Twitter compose — fix grammar, shorten, punchier. Bring your own key (OpenAI, Anthropic, OpenRouter, OpenCode).",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@10.15.1",
   "engines": {
-    "node": ">=20",
+    "node": ">=22.12",
     "pnpm": ">=10"
   },
   "scripts": {
     "dev": "vite --host --port 5173",
     "build": "tsc --noEmit && vite build",
-    "build:firefox": "tsc --noEmit && vite build --mode firefox",
+    "build:firefox": "tsc --noEmit && vite build --outDir dist-firefox --sourcemap inline",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src --type-aware",
@@ -23,19 +23,33 @@
     "zip": "node scripts/zip.mjs",
     "zip:firefox": "node scripts/zip.mjs --firefox"
   },
-  "keywords": ["x", "twitter", "extension", "ai", "writing", "grammar"],
+  "keywords": [
+    "x",
+    "twitter",
+    "extension",
+    "ai",
+    "writing",
+    "grammar"
+  ],
   "license": "MIT",
-  "devDependencies": {
-    "@crxjs/vite-plugin": "^2.0.4",
-    "@types/chrome": "^0.0.311",
-    "@types/node": "^22.15.0",
-    "oxfmt": "^0.65.0",
-    "oxlint": "^1.19.0",
-    "oxlint-tsgolint": "^7.0.2001",
-    "typescript": "^5.9.2",
-    "vite": "^6.3.6"
+  "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.46",
+    "@ai-sdk/openai": "^4.0.52",
+    "@hugeicons/core-free-icons": "^4.3.0",
+    "@openrouter/ai-sdk-provider": "^3.0.0",
+    "ai": "^7.0.85",
+    "solid-js": "^1.9.15",
+    "zod": "^4.1.8"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.7.1",
+    "@types/chrome": "^0.2.7",
+    "@types/node": "^26.4.0",
+    "oxfmt": "^0.65.0",
+    "oxlint": "^1.80.0",
+    "oxlint-tsgolint": "^7.0.2001",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "vite-plugin-solid": "^2.11.14"
   }
 }
