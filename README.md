@@ -8,7 +8,7 @@ Fix grammar, shorten, make it punchier — without leaving the post box. Bring y
 ![manifest v3](https://img.shields.io/badge/manifest-v3-1D9BF0)
 ![chrome & firefox](https://img.shields.io/badge/browser-Chrome%20%7C%20Firefox-black)
 ![typescript](https://img.shields.io/badge/TypeScript-5.9-black?logo=typescript)
-![oxlint](https://img.shields.io/badge/lint-oxlint-1D9BF0) ![oxfmt](https://img.shields.io/badge/format-oxfmt-black)
+![oxlint](https://img.shields.io/badge/lint-oxlint-1D9BF0) ![oxfmt](https://img.shields.io/badge/format-oxfmt-black) ![pnpm](https://img.shields.io/badge/pnpm-10.15-F69220)
 
 ---
 
@@ -49,17 +49,17 @@ popup:  [● XCompose v0.1.0 ⚙]          content bar in compose:
 
 ### 🚀 Install (dev)
 
-This project is **TypeScript + Vite + @crxjs/vite-plugin**. You build once, then load `dist/` as an unpacked extension (with HMR if you run `vite --watch`).
+This project is **TypeScript + Vite + @crxjs/vite-plugin** with **pnpm** (`packageManager: pnpm@10.15.1`). You build once, then load `dist/` as an unpacked extension (with HMR if you run `pnpm dev`).
 
 ```bash
-# 1. clone + install (npm / pnpm / yarn / bun)
-npm install
+# 1. clone + install (requires pnpm 10+; corepack enable pnpm)
+pnpm install
 
 # 2. typecheck + build
-npm run build        # → dist/  (Chrome)
-npm run build:firefox # → dist-firefox/ (Firefox)
+pnpm run build        # → dist/  (Chrome)
+pnpm run build:firefox # → dist-firefox/ (Firefox)
 # or keep HMR during dev:
-npm run dev          # vite dev server with crx HMR
+pnpm run dev          # vite dev server with crx HMR
 ```
 
 #### Chrome / Edge / Brave (Chromium)
@@ -71,10 +71,10 @@ npm run dev          # vite dev server with crx HMR
 
 #### Firefox
 
-1. `npm run build:firefox` (or `npm run build` — same MV3 works on FF 109+)
+1. `pnpm run build:firefox` (or `pnpm run build` — same MV3 works on FF 109+)
 2. Go to `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…**
 3. Select `dist-firefox/manifest.json` (or `dist/manifest.json`).
-4. For a signed build (AMO): `npm run zip:firefox`
+4. For a signed build (AMO): `pnpm run zip:firefox`
 
 > The source `manifest.json` is MV3 with `browser_specific_settings.gecko` — Vite+CRX rewrites `background.service_worker` + `content_scripts` + `web_accessible_resources` for the target. No manual manifest editing.
 
@@ -104,6 +104,7 @@ xcompose/
 ├── tsconfig.json          # strict TS 5.9
 ├── .oxlintrc.json         # oxlint (ultra-fast, type-aware)
 ├── .oxfmtrc.json          # oxfmt
+├── pnpm-lock.yaml         # pnpm 10 lockfile
 ├── icons/                 # 16/32/48/128 PNG (Pillow-generated)
 ├── src/
 │   ├── content.ts / .css  # toolbar injection + Lexical bridge
@@ -139,30 +140,31 @@ This repo embraces modern, fast tooling as requested:
 | **oxlint** (`type-aware`) | ~50-100× faster than ESLint, same rules via `typescript`/`unicorn`/`import` plugins |
 | **oxfmt** | Consistent formatting (100 cols, 2 spaces) — faster than Prettier |
 | **Vite 6 + @crxjs/vite-plugin 2** | Instant dev/HMR for extensions, proper `manifest.json` rewriting, Chrome+Firefox from one source |
+| **pnpm 10** | Fast, strict, content-addressable store; `pnpm-lock.yaml` + `packageManager` field |
 
 ```bash
-npm run typecheck   # tsc --noEmit
-npm run lint        # oxlint src --type-aware
-npm run lint:fix    # oxlint src --fix --type-aware
-npm run format      # oxfmt --check src
-npm run format:fix  # oxfmt src
-npm run check       # typecheck + lint + format (CI)
-npm run dev         # vite dev server + HMR
-npm run build       # typecheck + vite build → dist/
-npm run build:firefox
+pnpm run typecheck   # tsc --noEmit
+pnpm run lint        # oxlint src --type-aware
+pnpm run lint:fix    # oxlint src --fix --type-aware
+pnpm run format      # oxfmt --check src
+pnpm run format:fix  # oxfmt src
+pnpm run check       # typecheck + lint + format (CI)
+pnpm run dev         # vite dev server + HMR
+pnpm run build       # typecheck + vite build → dist/
+pnpm run build:firefox
 ```
 
-CI-friendly: `npm run check` fails on type, lint, or format drift.
+CI-friendly: `pnpm run check` fails on type, lint, or format drift.
 
 Config files: `tsconfig.json:1`, `.oxlintrc.json:1`, `.oxfmtrc.json:1`, `vite.config.ts:1`.
 
 ### 🛠 Build a release zip
 
 ```bash
-npm run build          # → dist/
-npm run zip            # → xcompose-0.1.0-chrome.zip
-npm run build:firefox  # → dist-firefox/
-npm run zip:firefox    # → xcompose-0.1.0-firefox.zip
+pnpm run build          # → dist/
+pnpm run zip            # → xcompose-0.1.0-chrome.zip
+pnpm run build:firefox  # → dist-firefox/
+pnpm run zip:firefox    # → xcompose-0.1.0-firefox.zip
 ```
 
 Or manually: `zip -r xcompose.zip dist -x "*.DS_Store"` 
@@ -174,10 +176,10 @@ PRs welcome. Keep the core bar minimal — settings can be rich.
 ```bash
 git clone https://github.com/<you>/xcompose
 cd xcompose
-npm install
-npm run dev          # or npm run build and load dist/
+pnpm install
+pnpm run dev          # or pnpm run build and load dist/
 # hack on src/*.ts — TS will complain loudly if you break types
-npm run check        # before pushing
+pnpm run check        # before pushing
 python scripts/gen_icons.py  # if you tweak icons (needs Pillow)
 ```
 

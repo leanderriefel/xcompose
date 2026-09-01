@@ -4,6 +4,11 @@
   "description": "Minimal AI writing assistant for X/Twitter compose — fix grammar, shorten, punchier. Bring your own key (OpenAI, Anthropic, OpenRouter, OpenCode).",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@10.15.1",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
+  },
   "scripts": {
     "dev": "vite --host --port 5173",
     "build": "tsc --noEmit && vite build",
@@ -14,18 +19,11 @@
     "lint:fix": "oxlint src --fix --type-aware",
     "format": "oxfmt --check src",
     "format:fix": "oxfmt src",
-    "check": "npm run typecheck && npm run lint && npm run format",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm run format",
     "zip": "node scripts/zip.mjs",
     "zip:firefox": "node scripts/zip.mjs --firefox"
   },
-  "keywords": [
-    "x",
-    "twitter",
-    "extension",
-    "ai",
-    "writing",
-    "grammar"
-  ],
+  "keywords": ["x", "twitter", "extension", "ai", "writing", "grammar"],
   "license": "MIT",
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.4",
@@ -36,5 +34,8 @@
     "oxlint-tsgolint": "^7.0.2001",
     "typescript": "^5.9.2",
     "vite": "^6.3.6"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
   }
 }
