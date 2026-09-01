@@ -1,0 +1,40 @@
+{
+  "name": "xcompose",
+  "version": "0.1.0",
+  "description": "Minimal AI writing assistant for X/Twitter compose — fix grammar, shorten, punchier. Bring your own key (OpenAI, Anthropic, OpenRouter, OpenCode).",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host --port 5173",
+    "build": "tsc --noEmit && vite build",
+    "build:firefox": "tsc --noEmit && vite build --mode firefox",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src --type-aware",
+    "lint:fix": "oxlint src --fix --type-aware",
+    "format": "oxfmt --check src",
+    "format:fix": "oxfmt src",
+    "check": "npm run typecheck && npm run lint && npm run format",
+    "zip": "node scripts/zip.mjs",
+    "zip:firefox": "node scripts/zip.mjs --firefox"
+  },
+  "keywords": [
+    "x",
+    "twitter",
+    "extension",
+    "ai",
+    "writing",
+    "grammar"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.4",
+    "@types/chrome": "^0.0.311",
+    "@types/node": "^22.15.0",
+    "oxfmt": "^0.65.0",
+    "oxlint": "^1.19.0",
+    "oxlint-tsgolint": "^7.0.2001",
+    "typescript": "^5.9.2",
+    "vite": "^6.3.6"
+  }
+}

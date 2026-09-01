@@ -1,0 +1,19 @@
+# deps
+node_modules/
+dist/
+dist-firefox/
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+
+# env
+.env
+
+# built zips
+xcompose-*.zip

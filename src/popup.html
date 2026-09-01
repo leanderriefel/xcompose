@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>XCompose</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <header class="popup-head">
+        <div class="brand">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="brand-name">XCompose</span>
+          <span class="ver" id="ver">v0.1.0</span>
+        </div>
+        <button class="icon-btn" id="openOptions" title="Open settings" aria-label="Open settings">
+          ⚙
+        </button>
+      </header>
+
+      <div class="card" id="statusCard">
+        <div class="status-row">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-text" id="statusText">Checking…</span>
+          <span class="pill" id="providerPill">—</span>
+        </div>
+        <div class="model-row">
+          <span class="muted">Model</span>
+          <span class="model" id="modelText">—</span>
+        </div>
+        <div class="hint" id="hintText"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="btnSettings">Open settings</button>
+        <button class="btn ghost" id="btnHelp">How it works</button>
+      </div>
+
+      <div class="mini-help hidden" id="miniHelp">
+        <p>
+          <strong>How to use:</strong> Open any compose box on X. You’ll see a tiny bar under the
+          text area: <em>Fix, Shorten, Punchier</em>. Click one — it replaces the draft in place.
+          <kbd>↩</kbd> undoes.
+        </p>
+        <p class="muted small">
+          Shortcut: <kbd>Ctrl</kbd> / <kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd> to fix grammar.
+        </p>
+      </div>
+
+      <footer class="foot">
+        <span class="muted small">BYOK • No data stored remotely</span>
+        <a href="#" id="rateLink" class="link small">GitHub</a>
+      </footer>
+    </div>
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>
