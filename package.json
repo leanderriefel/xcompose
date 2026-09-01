@@ -21,7 +21,8 @@
     "format:fix": "oxfmt src",
     "check": "pnpm run typecheck && pnpm run lint && pnpm run format",
     "zip": "node scripts/zip.mjs",
-    "zip:firefox": "node scripts/zip.mjs --firefox"
+    "zip:firefox": "node scripts/zip.mjs --firefox",
+    "package": "pnpm run build && pnpm run build:firefox && node scripts/zip.mjs && node scripts/zip.mjs --firefox"
   },
   "keywords": [
     "x",

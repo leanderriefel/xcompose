@@ -8,28 +8,38 @@ const outDir = isFirefox ? "dist-firefox" : "dist";
 const manifestPath = join(outDir, "manifest.json");
 
 if (!existsSync(manifestPath)) {
-  console.error(`✕ ${outDir}/manifest.json not found. Run \`npm run build${isFirefox ? ":firefox" : ""}\` first.`);
+  console.error(
+    `✕ ${outDir}/manifest.json not found. Run \`npm run build${isFirefox ? ":firefox" : ""}\` first.`
+  );
   process.exit(1);
 }
 
 const manifest = JSON.parse(
-  await (await import("node:fs/promises")).readFile(manifestPath, "utf8"),
+  await (await import("node:fs/promises")).readFile(manifestPath, "utf8")
 );
 const version = manifest.version ?? "0.0.0";
 const name = isFirefox ? `xcompose-${version}-firefox.zip` : `xcompose-${version}-chrome.zip`;
-const outPath = resolve(name);
+const pkgDir = resolve("packages");
+await (await import("node:fs/promises")).mkdir(pkgDir, { recursive: true });
+const outPath = join(pkgDir, name);
 
 // Prefer system `zip` if available (Windows has it via Git Bash), fallback to manual via `jszip`? Keep simple: use `zip` command.
 try {
   // Check zip exists
   execSync("zip -v", { stdio: "ignore" });
 } catch {
-  console.error("✕ `zip` CLI not found. On Windows, use Git Bash or WSL, or install 7zip and alias.");
+  console.error(
+    "✕ `zip` CLI not found. On Windows, use Git Bash or WSL, or install 7zip and alias."
+  );
   process.exit(1);
 }
 
 console.log(`→ Zipping ${outDir}/ → ${name}`);
 try {
+  const { unlinkSync } = await import("node:fs");
+  try {
+    unlinkSync(outPath);
+  } catch {}
   // Use zip with maximum compression, exclude hidden files
   // On Windows, we need to handle path separators
   execSync(`zip -r -9 "${outPath}" . -x "*.DS_Store" -x "*.map"`, {
