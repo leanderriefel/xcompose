@@ -1,5 +1,7 @@
 # XCompose
 
+[Privacy policy](PRIVACY.md)
+
 > AI buttons inside the **X (Twitter) compose box**. Fix grammar, shorten, punchier — bring your own key.
 
 ![license MIT](https://img.shields.io/badge/license-MIT-black)
