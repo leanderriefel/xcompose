@@ -4,6 +4,10 @@ Last updated: September 2, 2026
 
 XCompose is a browser extension that adds user-initiated AI writing actions to the X/Twitter post and reply composer.
 
+## User-facing disclosure
+
+XCompose stores your settings and API keys locally. When you choose an action, your draft is sent over HTTPS to your selected OpenRouter or OpenCode Go provider to generate a rewrite. XCompose does not send data to its developer.
+
 ## Data XCompose stores
 
 XCompose stores the following data locally in the browser using extension storage:
