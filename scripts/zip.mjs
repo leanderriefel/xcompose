@@ -48,13 +48,13 @@ try {
   });
   const stat = statSync(outPath);
   console.log(`✓ Wrote ${name} (${(stat.size / 1024).toFixed(1)} KiB)`);
-  // Also list contents briefly
-  try {
+  // Also list contents briefly when Info-ZIP utilities are available.
+  if (process.platform !== "win32") {
     const out = execSync(`zipinfo -1 "${outPath}" | head -n 20`, { encoding: "utf8" });
     console.log(out.trim());
     const total = execSync(`zipinfo -1 "${outPath}" | wc -l`, { encoding: "utf8" }).trim();
     console.log(`… ${total} files total`);
-  } catch {}
+  }
 } catch (err) {
   console.error("✕ zip failed", err);
   process.exit(1);
