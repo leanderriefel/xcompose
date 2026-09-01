@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "vite --host --port 5173",
     "build": "tsc --noEmit && vite build",
-    "build:firefox": "tsc --noEmit && vite build --outDir dist-firefox --sourcemap inline",
+    "build:firefox": "tsc --noEmit && vite build --outDir dist-firefox",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src --type-aware",
@@ -35,7 +35,9 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.46",
     "@ai-sdk/openai": "^4.0.52",
+    "@ai-sdk/openai-compatible": "^3.0.42",
     "@hugeicons/core-free-icons": "^4.3.0",
+    "@kobalte/core": "^0.13.13",
     "@openrouter/ai-sdk-provider": "^3.0.0",
     "ai": "^7.0.85",
     "solid-js": "^1.9.15",

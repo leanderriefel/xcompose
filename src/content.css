@@ -1,205 +1,157 @@
-:root {
-  --xcompose-surface: #0f0f0f;
-  --xcompose-hover: #16181c;
-  --xcompose-border: #2f3336;
-  --xcompose-border-strong: #3a3f45;
-  --xcompose-text: #e7e9ea;
-  --xcompose-muted: #71767b;
-  --xcompose-blue: #1d9bf0;
-  --xcompose-blue-hover: #1a8cd8;
-  --xcompose-radius-card: 12px;
-}
-
 .xcompose-bar {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  padding: 7px 8px;
-  margin: 10px 0 8px;
-  background: var(--xcompose-surface);
-  border: 1px solid var(--xcompose-border);
-  border-radius: var(--xcompose-radius-card);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 40%);
-  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-size: 13px;
-  line-height: 1;
-  color: var(--xcompose-text);
-  box-sizing: border-box;
-  max-width: 100%;
-  z-index: 5;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  align-self: center;
 }
 
-.xcompose-bar.busy .xcompose-btn {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.xcompose-brand,
-.xcompose-btn,
-.xcompose-dropdown-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: inherit;
-  font-size: 12.5px;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--xcompose-text);
+.xcompose-trigger {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: #71767b;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 9999px;
+  border: 0;
+  border-radius: 50%;
+  box-sizing: border-box;
   cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
+  line-height: 0;
   transition:
-    background 0.14s,
-    border-color 0.14s,
-    transform 0.08s;
+    background-color 120ms ease,
+    color 120ms ease;
 }
 
-.xcompose-btn svg,
-.xcompose-brand svg,
-.xcompose-dropdown-item svg,
-.xcompose-icon-btn svg {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
+.xcompose-trigger:hover {
+  color: #e7e9ea;
+  background: rgb(239 243 244 / 10%);
 }
 
-.xcompose-brand {
-  padding: 5px 7px;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 700;
-}
-.xcompose-brand svg {
-  width: 13px;
-  height: 13px;
-  color: var(--xcompose-muted);
-}
-.xcompose-brand:hover {
-  background: var(--xcompose-hover);
+.xcompose-trigger:disabled {
+  cursor: wait;
+  opacity: 0.45;
 }
 
-.xcompose-btn {
-  padding: 6.5px 12px;
-  border-color: var(--xcompose-border);
-  background: #000;
-}
-.xcompose-btn:hover {
-  background: var(--xcompose-hover);
-  border-color: var(--xcompose-border-strong);
-}
-.xcompose-btn:active {
-  transform: scale(0.97);
-}
-.xcompose-btn.primary {
-  background: var(--xcompose-blue);
-  border-color: var(--xcompose-blue);
-  color: #fff;
-  font-weight: 700;
-}
-.xcompose-btn.primary:hover {
-  background: var(--xcompose-blue-hover);
-  border-color: var(--xcompose-blue-hover);
-}
-
-.xcompose-more {
-  position: relative;
-  display: inline-flex;
-}
-.xcompose-more summary {
-  list-style: none;
-  display: inline-flex;
-}
-.xcompose-more summary::-webkit-details-marker {
-  display: none;
-}
-.xcompose-more[open] summary {
-  background: var(--xcompose-hover);
-  border-color: var(--xcompose-border-strong);
-}
-.xcompose-more-btn {
-  min-width: 32px;
-  justify-content: center;
-  color: var(--xcompose-muted);
-}
-.xcompose-more-btn:hover {
-  color: var(--xcompose-text);
-}
-.xcompose-more[open] .xcompose-more-btn {
-  color: var(--xcompose-text);
+.xcompose-trigger svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 2;
+  transform: translateY(-1px);
 }
 
 .xcompose-dropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  min-width: 150px;
-  padding: 6px;
+  --menu-bg: #000;
+  --menu-border: #2f3336;
+  --menu-text: #e7e9ea;
+  --menu-muted: #71767b;
+  --menu-hover: #16181c;
+  position: fixed;
+  z-index: 2147483647;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  background: #0a0a0a;
-  border: 1px solid var(--xcompose-border);
-  border-radius: 12px;
-  box-shadow: 0 10px 28px rgb(0 0 0 / 60%);
-  z-index: 20;
-}
-.xcompose-dropdown-item {
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: none;
-  width: 100%;
-  text-align: left;
-}
-.xcompose-dropdown-item:hover {
-  background: var(--xcompose-hover);
+  width: 188px;
+  padding: 4px;
+  color: var(--menu-text);
+  background: var(--menu-bg);
+  border: 1px solid var(--menu-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.25;
 }
 
-.xcompose-status {
-  font-size: 12px;
-  color: var(--xcompose-muted);
-  max-width: 170px;
+.xcompose-dropdown[hidden],
+.xcompose-dropdown-item[hidden],
+.xcompose-menu-status[hidden],
+.xcompose-tooltip[hidden] {
+  display: none;
+}
+
+.xcompose-tooltip {
+  position: fixed;
+  z-index: 2147483647;
+  padding: 3px 7px;
+  color: #fff;
+  background: #0f1419;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 35%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 16px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.xcompose-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 9px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.xcompose-dropdown-item:hover {
+  background: var(--menu-hover);
+}
+
+.xcompose-dropdown-item svg {
+  width: 17px;
+  height: 17px;
+  color: var(--menu-muted);
+  flex: 0 0 auto;
+}
+
+.xcompose-divider {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--menu-border);
+}
+
+.xcompose-menu-status {
+  margin: 4px 8px 5px;
   overflow: hidden;
+  color: var(--menu-muted);
+  font-size: 12px;
+  line-height: 1.35;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.xcompose-icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--xcompose-border);
-  background: #000;
-  color: var(--xcompose-muted);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.14s;
-}
-.xcompose-icon-btn:hover {
-  background: var(--xcompose-hover);
-  color: var(--xcompose-text);
-  border-color: var(--xcompose-border-strong);
+.xcompose-bar.busy + .xcompose-dropdown .xcompose-dropdown-item {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 @media (prefers-color-scheme: light) {
-  .xcompose-bar {
-    background: #f7f9f9;
-    border-color: #e1e8ed;
+  .xcompose-trigger {
+    color: #536471;
+  }
+
+  .xcompose-trigger:hover {
     color: #0f1419;
+    background: rgb(15 20 25 / 8%);
   }
-  .xcompose-btn {
-    background: transparent;
-  }
-  .xcompose-btn:hover {
-    background: #eceff1;
-  }
+
   .xcompose-dropdown {
-    background: #fff;
+    --menu-bg: #fff;
+    --menu-border: #cfd9de;
+    --menu-text: #0f1419;
+    --menu-muted: #536471;
+    --menu-hover: #f7f9f9;
   }
 }

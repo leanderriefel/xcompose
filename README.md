@@ -10,7 +10,7 @@
 
 ## What it does
 
-- Injects a small monochrome bar **under X's compose textbox** (timeline composer + modal dialog).
+- Injects a small monochrome bar into X's compose toolbar (timeline, modal, and reply composers).
 - Buttons: **Fix · Shorten · Punchier** by default, more in `▾` (Expand, Formal, Casual, Emojify). Which buttons show is configurable.
 - Replaces the draft in place. `↩` undoes. `Ctrl/⌘+Shift+G` fixes grammar.
 - Models, prompts, and toolbar buttons are all configurable in settings.
@@ -20,11 +20,8 @@
 
 | Provider | Default model | Notes |
 |---|---|---|
-| OpenAI | `gpt-5.6-luna` | ChatGPT users: this needs an *API key*, not Plus |
-| Anthropic | `claude-haiku-4-5` | |
 | OpenRouter | `openai/gpt-5.6-luna` | One key → any model |
-| OpenCode | `gpt-5.6-luna` | Zen key; override Base URL if self-hosted |
-| Custom | — | Any OpenAI-compatible endpoint |
+| OpenCode Go | `gpt-5.6-luna` | Uses the API key from your OpenCode Go subscription |
 
 ## Develop
 
@@ -32,7 +29,7 @@
 pnpm install
 pnpm dev            # vite dev server + HMR
 pnpm build          # → dist/        (Chrome: load unpacked)
-pnpm build:firefox  # → dist-firefox (about:debugging, inline sourcemap for AMO)
+pnpm build:firefox  # → dist-firefox (about:debugging in Firefox/Zen)
 pnpm check          # typecheck + lint + format
 pnpm zip            # store zip (after build)
 ```
@@ -51,7 +48,7 @@ pnpm zip            # store zip (after build)
 manifest.json
 src/
 ├── content.ts/.css    # toolbar injection into X (vanilla, 3 kB)
-├── background.ts      # message hub, lazy-loads llm
+├── background.ts      # message hub and LLM entry point
 ├── lib/config.ts      # config, actions, prompts, storage
 ├── lib/llm.ts         # AI SDK call
 ├── lib/icons.ts       # HugeIcons free renderer
