@@ -6,7 +6,7 @@
 - Fixed the empty page-visible clipboard payload, then caught and fixed a second Firefox failure during subsequent editing caused by moving Draft.js's caret to the outer editor boundary.
 - Firefox 155 and Chromium 153 both passed seven real content-script checks: replacement, multiline/blank lines, emoji/trailing newline, restoration of the original draft, replacement after focus while locked, subsequent native editing, and isolation from a second composer. DOM text was checked against the page's rendered EditorState.
 - All 28 unit tests passed. The real-browser suite is required by the packaging command and runs in both GitHub check and release workflows.
-- These are local browser integration tests. An interactive test of 0.2.2 on the user's signed-in X.com Firefox session is still pending; do not describe the local fixture as an actual X.com test.
+- The user loaded the temporary 0.2.2 Firefox build and confirmed the requested X.com Fix, continued typing, and Undo check with "good". This manual result is user-reported; the automated checks above use local fixtures.
 
 ## 0.2.1
 
