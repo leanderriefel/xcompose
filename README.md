@@ -1,71 +1,42 @@
 # XCompose
 
-[Privacy policy](PRIVACY.md)
+Fix typos, shorten a draft, or make a post a little punchier, right where you write on X.
 
-> AI buttons inside the **X (Twitter) compose box**. Fix grammar, shorten, punchier — bring your own key.
+**[Get it for Chrome](https://chromewebstore.google.com/detail/xcompose/gmkogaffieecihojdkblmoheokdehclo)** · **[Get it for Firefox](https://addons.mozilla.org/en-US/firefox/addon/xcompose/)**
 
-![license MIT](https://img.shields.io/badge/license-MIT-black)
-![manifest v3](https://img.shields.io/badge/manifest-v3-1D9BF0)
-![pnpm](https://img.shields.io/badge/pnpm-10-F69220)
-![typescript](https://img.shields.io/badge/TypeScript-7-black?logo=typescript)
-![solid](https://img.shields.io/badge/SolidJS-1.9-2c4f7c?logo=solid)
+Bring your own **OpenRouter** or **OpenCode Go** API key.
 
-## What it does
+## Get started
 
-- Injects a small monochrome bar into X's compose toolbar (timeline, modal, and reply composers).
-- Buttons: **Fix · Shorten · Punchier** by default, more in `▾` (Expand, Formal, Casual, Emojify). Which buttons show is configurable.
-- Replaces the draft in place. `↩` undoes. `Ctrl/⌘+Shift+G` fixes grammar.
-- Models, prompts, and toolbar buttons are all configurable in settings.
-- No backend, no analytics. Keys stay in `chrome.storage.local`.
+1. Install XCompose, open its **Settings**, and choose your provider.
+2. Add your API key, click **Test**, and allow access to your provider when prompted.
+3. Write a post or reply on X, then open the **XCompose** menu beside the compose tools.
 
-## Providers
+Choose **Fix**, **Shorten**, or **Punchier** to rewrite your draft in place. **Undo** brings back your previous draft. You decide when to post.
 
-| Provider | Default model | Notes |
-|---|---|---|
-| OpenRouter | `openai/gpt-5.6-luna` | One key → any model |
-| OpenCode Go | `gpt-5.6-luna` | Uses the API key from your OpenCode Go subscription |
+Want a different tone? Enable more actions in Settings, or adjust the model and instructions to suit your writing.
 
-## Develop
+**Shortcut:** `Ctrl+Shift+G` on Windows/Linux or `⌘+Shift+G` on Mac fixes grammar in the active draft.
 
-```bash
-pnpm install
-pnpm dev            # vite dev server + HMR
-pnpm build          # → dist/        (Chrome: load unpacked)
-pnpm build:firefox  # → dist-firefox (about:debugging in Firefox/Zen)
-pnpm check          # typecheck + lint + format
+## Your words, your provider
+
+Your settings and API keys are stored in your browser. When you use an action, your draft and instructions go directly to your chosen AI provider, with your key used to authenticate the request. XCompose has no analytics or developer-run server.
+
+[Privacy policy](PRIVACY.md) · [Report an issue or suggest an idea](https://github.com/leanderriefel/xcompose/issues)
+
+## For developers
+
+Use Node.js 24 and pnpm 10.15.1.
+
+```sh
+pnpm install --frozen-lockfile
+pnpm dev            # local development
+pnpm build          # Chrome extension in dist/
+pnpm build:firefox  # Firefox extension in dist-firefox/
+pnpm check          # types, lint, and formatting
 pnpm test           # regression tests
-pnpm release patch  # bump + verify + package both stores and review sources
-pnpm zip            # store zip (after build)
 ```
 
-| Tool | Role |
-|---|---|
-| TypeScript 7 (`strict`) | types end to end |
-| oxlint (type-aware) + oxfmt | lint & format, Oxc-fast |
-| Vite 8 + @crxjs/vite-plugin | bundling, HMR, manifest rewrite |
-| SolidJS | popup + options UI (~7 kB runtime) |
-| AI SDK 7 (`ai`) | one `generateText` for every provider, lazy-loaded chunk |
+Load `dist/` as an unpacked extension in Chrome, or load `dist-firefox/manifest.json` through Firefox's `about:debugging`.
 
-See [RELEASING.md](RELEASING.md) for store submissions and automated GitHub releases.
-
-## Structure
-
-```
-manifest.json
-src/
-├── content.ts/.css    # toolbar injection into X (vanilla, 3 kB)
-├── background.ts      # message hub and LLM entry point
-├── lib/config.ts      # config, actions, prompts, storage
-├── lib/llm.ts         # AI SDK call
-├── lib/icons.ts       # HugeIcons free renderer
-├── popup.html/.tsx    # status + open settings
-└── options.html/.tsx  # provider, model, buttons, prompts
-```
-
-## Privacy
-
-Keys and prompts never leave `chrome.storage.local`. Requests go directly from the background worker to your chosen provider.
-
-## License
-
-MIT — see [LICENSE](LICENSE).
+[Release guide](RELEASING.md) · [Changelog](CHANGELOG.md) · [Downloads](https://github.com/leanderriefel/xcompose/releases) · [MIT license](LICENSE)
