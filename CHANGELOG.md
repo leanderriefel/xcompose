@@ -4,6 +4,7 @@
 
 - Replace drafts through the editor's paste handler to prevent duplicated text and frozen composers.
 - Preserve blank lines and keep Undo available after a partially applied replacement.
+- Lock the composer during generation, with a Cancel action in the dropdown and a 60-second timeout that restores editing. Disable other generation actions while running and ignore late responses after cancellation.
 - Avoid overwriting typing or stealing focus during draft replacement.
 - Keep one XCompose button per toolbar, including after composer changes.
 - Send a stable OpenCode Go session header, including during concurrent requests.

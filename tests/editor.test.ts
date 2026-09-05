@@ -34,6 +34,16 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("draft replacement", () => {
+  it("compares DOM ranges when Chrome renders extra newlines in Selection text", async () => {
+    const selection = getSelection()!;
+    const renderedText = vi.spyOn(selection, "toString").mockReturnValue("Original\n");
+    editor.addEventListener("paste", event => {
+      event.preventDefault();
+      editor.textContent = "New";
+    });
+    expect(await setText(editor, "New")).toBe(true);
+    renderedText.mockRestore();
+  });
   it("reads every styled fragment in a block", () => {
     editor.innerHTML =
       '<div data-block="true"><span data-offset-key="a">Hello </span><span data-offset-key="b">world</span></div>';

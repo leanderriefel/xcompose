@@ -43,10 +43,11 @@ ReactDOM.render(
 window.chrome = {
   storage: { local: { get: async () => ({}) }, onChanged: { addListener() {} } },
   runtime: {
-    sendMessage: async message => ({
-      ok: true,
-      result: message.text.replace("hello wrld", "Hello world."),
-    }),
+    sendMessage: async message => {
+      if (message.type !== "enhance") return { ok: true };
+      await new Promise(resolve => setTimeout(resolve, 100));
+      return { ok: true, result: message.text.replace("hello wrld", "Hello world.") };
+    },
   },
 };
 await import("../src/content.ts");
@@ -71,6 +72,21 @@ document.getElementById("checks").onclick = async () => {
       `${pass ? "PASS" : "FAIL"}: ${JSON.stringify(text)} — DOM=${JSON.stringify(getText(editor))}, EditorState=${JSON.stringify(stateText)}`
     );
   }
+  const bar = document.querySelector(".xcompose-bar");
+  document.getElementById(bar.dataset.menuId).querySelector('[data-action="fix-grammar"]').click();
+  editor.blur();
+  editor.focus(); // Reproduce focusing X's read-only composer while generating.
+  lines.push(
+    `${editor.getAttribute("contenteditable") === "false" ? "PASS" : "FAIL"}: locked during generation`
+  );
+  await new Promise(resolve => setTimeout(resolve, 250));
+  const expected = original.replace("hello wrld", "Hello world.");
+  lines.push(
+    `${getText(editor) === expected && states[0].getCurrentContent().getPlainText("\n") === expected ? "PASS" : "FAIL"}: focus during generation still replaces the entire draft`
+  );
+  lines.push(
+    `${editor.getAttribute("contenteditable") === "true" ? "PASS" : "FAIL"}: unlocked after generation`
+  );
   lines.push(
     `${document.querySelectorAll(".xcompose-trigger").length === 2 ? "PASS" : "FAIL"}: one toolbar per composer`
   );

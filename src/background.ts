@@ -10,16 +10,30 @@ async function requireProviderPermission(provider: "openrouter" | "opencode-go")
   }
 }
 
-chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+const requests = new Map<string, AbortController>();
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  const requestKey = `${sender.tab?.id ?? "extension"}:${sender.frameId ?? 0}:${String(msg.requestId)}`;
   (async () => {
     if (msg.type === "open-options") {
       await chrome.runtime.openOptionsPage();
       return { ok: true };
     }
     if (msg.type === "enhance") {
-      const cfg = await getConfig();
-      await requireProviderPermission(cfg.provider);
-      return { ok: true, result: await enhance(msg.actionId, msg.text, cfg) };
+      const controller = new AbortController();
+      requests.set(requestKey, controller);
+      try {
+        const cfg = await getConfig();
+        await requireProviderPermission(cfg.provider);
+        controller.signal.throwIfAborted();
+        return { ok: true, result: await enhance(msg.actionId, msg.text, cfg, controller.signal) };
+      } finally {
+        requests.delete(requestKey);
+      }
+    }
+    if (msg.type === "cancel-enhance") {
+      requests.get(requestKey)?.abort();
+      return { ok: true };
     }
     if (msg.type === "get-go-models") {
       await requireProviderPermission("opencode-go");

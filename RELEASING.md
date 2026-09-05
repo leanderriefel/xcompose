@@ -13,7 +13,7 @@ pnpm release patch
 
 The command runs type checking, lint, formatting, regression tests, both production builds, Mozilla's extension validator, and ZIP verification. It writes Chrome, Firefox, and review-source archives plus SHA-256 checksums under `packages/`. No system ZIP utility or FFmpeg is required. Store artwork is unchanged by routine releases; regenerate it separately with `pnpm assets` when needed (requires FFmpeg and the artwork sources).
 
-Update CHANGELOG.md before submitting a version. Load `dist/` unpacked in Chrome and `dist-firefox/manifest.json` through Firefox's `about:debugging` for a manual smoke test. Test Fix, Undo, multiline drafts, continued typing, and multiple composers. Provider tests require your own key and explicit provider permission from Settings → Test.
+Update CHANGELOG.md before submitting a version. Load `dist/` unpacked in Chrome and `dist-firefox/manifest.json` through Firefox's `about:debugging` for a manual smoke test. Test Fix, Undo, multiline drafts, continued typing, and multiple composers. While generating, verify typing is blocked, Cancel restores editing immediately, and focusing the locked input does not cause the response to append. The client has a 60-second deadline even if the worker stops responding. Provider tests require your own key and explicit provider permission from Settings → Test.
 
 ## Submit to the stores
 

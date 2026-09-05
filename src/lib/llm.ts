@@ -57,7 +57,8 @@ async function loadGoSessionId(): Promise<string> {
 export async function enhance(
   actionId: string,
   text: string,
-  cfg: XComposeConfig
+  cfg: XComposeConfig,
+  signal?: AbortSignal
 ): Promise<string> {
   const prompt = cfg.prompts[actionId] ?? DEFAULT_PROMPTS[actionId];
   if (!prompt) throw new Error(`Unknown action: ${actionId}`);
@@ -69,7 +70,9 @@ export async function enhance(
     model: modelFor(cfg),
     instructions,
     prompt: text,
-    abortSignal: AbortSignal.timeout(60_000),
+    abortSignal: signal
+      ? AbortSignal.any([signal, AbortSignal.timeout(60_000)])
+      : AbortSignal.timeout(60_000),
     ...(headers ? { headers } : {}),
   });
   const result = out.trim();

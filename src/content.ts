@@ -1,12 +1,20 @@
 import { ACTIONS, getConfig, type ActionMeta } from "./lib/config.js";
+import { startGeneration } from "./lib/generation.js";
 import { getText, setText } from "./lib/editor.js";
 import { icon } from "./lib/icons.js";
 
-const SELECTOR = 'div[role="textbox"][contenteditable="true"]';
+const SELECTOR =
+  'div[role="textbox"][contenteditable="true"], div[role="textbox"][data-xcompose-busy]';
 const TOOLBAR_SELECTOR = '[data-testid="toolBar"]';
 const OWNER = crypto.randomUUID();
 
 document.documentElement.dataset.xcomposeOwner = OWNER;
+// Recover any composer left locked by an invalidated extension script.
+document.querySelectorAll<HTMLElement>("[data-xcompose-busy]").forEach(editor => {
+  editor.setAttribute("contenteditable", "true");
+  editor.removeAttribute("aria-busy");
+  delete editor.dataset.xcomposeBusy;
+});
 document
   .querySelectorAll<HTMLElement>(
     "[data-xcompose-root], .xcompose-bar, .xcompose-dropdown, .xcompose-tooltip"
@@ -23,6 +31,7 @@ type Mount = {
 
 const mounts = new Map<HTMLElement, Mount>();
 const busyEditors = new WeakSet<HTMLElement>();
+const cancellations = new Map<HTMLElement, () => void>();
 let openMenu: HTMLElement | undefined;
 let menuSequence = 0;
 
@@ -57,6 +66,7 @@ function insertIntoToolbar(host: HTMLElement, bar: HTMLElement) {
 function removeMount(editor: HTMLElement) {
   const mount = mounts.get(editor);
   if (!mount) return;
+  cancellations.get(editor)?.();
   if (openMenu === mount.menu) openMenu = undefined;
   mount.menu?.remove();
   mount.tooltip?.remove();
@@ -82,7 +92,7 @@ function scan(enabled: string[]) {
     const existing = mounts.get(editor);
     const { display, visibility } = getComputedStyle(editor);
     const visible =
-      editor.isContentEditable &&
+      (editor.isContentEditable || busyEditors.has(editor)) &&
       editor.getClientRects().length > 0 &&
       display !== "none" &&
       visibility !== "hidden";
@@ -142,6 +152,12 @@ function buildBar(editor: HTMLElement, enabled: string[]): Pick<Mount, "bar" | "
   trigger.setAttribute("aria-label", "Open XCompose");
   trigger.setAttribute("aria-expanded", "false");
   trigger.append(icon("spell-check"));
+  const cancel = document.createElement("button");
+  cancel.type = "button";
+  cancel.className = "xcompose-dropdown-item xcompose-cancel";
+  cancel.textContent = "Cancel";
+  cancel.hidden = !busyEditors.has(editor);
+  cancel.addEventListener("click", () => cancellations.get(editor)?.());
   bar.append(trigger);
 
   const instance = ++menuSequence;
@@ -198,7 +214,7 @@ function buildBar(editor: HTMLElement, enabled: string[]): Pick<Mount, "bar" | "
   const status = document.createElement("div");
   status.className = "xcompose-menu-status";
   status.hidden = true;
-  menu.append(undo, divider, settings, status);
+  menu.append(cancel, undo, divider, settings, status);
   document.body.append(menu);
 
   const tooltip = document.createElement("div");
@@ -281,14 +297,20 @@ async function run(editor: HTMLElement, bar: HTMLElement, actionId: string) {
   }
   busyEditors.add(editor);
   bar.classList.add("busy");
-  if (trigger) trigger.disabled = true;
+  const menu = document.getElementById(bar.dataset.menuId ?? "");
+  const cancel = menu?.querySelector<HTMLButtonElement>(".xcompose-cancel");
+  const actions = menu?.querySelectorAll<HTMLButtonElement>("[data-action], .xcompose-undo");
+  actions?.forEach(button => {
+    button.disabled = true;
+  });
+  if (trigger) trigger.setAttribute("aria-busy", "true");
+  if (cancel) cancel.hidden = false;
   setStatus(bar, "Working…");
   try {
-    const response = await chrome.runtime.sendMessage({
-      type: "enhance",
-      actionId,
-      text: original,
-    });
+    const generation = startGeneration(editor, actionId, original);
+    cancellations.set(editor, generation.cancel);
+    const response = await generation.response;
+    cancellations.delete(editor);
     if (!response.ok) throw new Error(response.error);
     const result = String(response.result).trim();
     if (
@@ -299,7 +321,6 @@ async function run(editor: HTMLElement, bar: HTMLElement, actionId: string) {
       setStatus(bar, "Draft changed");
     } else if (result && result !== original) {
       bar.dataset.prev = original;
-      const menu = document.getElementById(bar.dataset.menuId ?? "");
       const undo = menu?.querySelector<HTMLElement>(".xcompose-undo");
       const applied = await setText(editor, result);
       if (!applied) {
@@ -318,8 +339,13 @@ async function run(editor: HTMLElement, bar: HTMLElement, actionId: string) {
     setStatus(bar, (error instanceof Error ? error.message : String(error)).slice(0, 60));
   } finally {
     busyEditors.delete(editor);
+    cancellations.delete(editor);
+    if (cancel) cancel.hidden = true;
     bar.classList.remove("busy");
-    if (trigger) trigger.disabled = false;
+    actions?.forEach(button => {
+      button.disabled = false;
+    });
+    if (trigger) trigger.removeAttribute("aria-busy");
   }
 }
 

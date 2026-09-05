@@ -24,6 +24,9 @@ function selectedEditor(editor: HTMLElement): boolean {
 export async function setText(editor: HTMLElement, text: string): Promise<boolean> {
   if (!editor.isConnected) return false;
   const original = getText(editor);
+  // React's selection plugin ignores focus received while contenteditable=false.
+  // Re-establish focus after unlocking so the upcoming range reaches Draft.js.
+  if (document.activeElement === editor) editor.blur();
   editor.focus();
   const selection = getSelection();
   if (!selection) return false;
@@ -37,7 +40,8 @@ export async function setText(editor: HTMLElement, text: string): Promise<boolea
     !editor.isConnected ||
     getText(editor) !== original ||
     !selectedEditor(editor) ||
-    selection.toString() !== selectedText
+    selection.rangeCount !== 1 ||
+    selection.getRangeAt(0).toString() !== selectedText
   )
     return false;
 
