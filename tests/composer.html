@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>XCompose Draft.js regression playground</title>
+    <style>
+      body {
+        font: 16px system-ui;
+        max-width: 850px;
+        margin: 40px auto;
+        background: #15202b;
+        color: #eee;
+      }
+      section {
+        border: 1px solid #789;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .public-DraftEditor-content {
+        min-height: 100px;
+        padding: 12px;
+        background: #253341;
+        white-space: pre-wrap;
+      }
+      button {
+        padding: 8px;
+        margin: 4px;
+      }
+      pre {
+        white-space: pre-wrap;
+      }
+      #results {
+        color: #aef;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>XCompose composer tests</h1>
+    <p>
+      Real Draft.js editors. Provider responses are local test data; no API keys or network calls.
+    </p>
+    <button id="checks">Run replacement and Undo checks</button>
+    <pre id="results">Ready</pre>
+    <div id="root"></div>
+    <script type="module" src="./composer.mjs"></script>
+  </body>
+</html>

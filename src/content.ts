@@ -1,4 +1,5 @@
 import { ACTIONS, getConfig, type ActionMeta } from "./lib/config.js";
+import { getText, setText } from "./lib/editor.js";
 import { icon } from "./lib/icons.js";
 
 const SELECTOR = 'div[role="textbox"][contenteditable="true"]';
@@ -21,6 +22,7 @@ type Mount = {
 };
 
 const mounts = new Map<HTMLElement, Mount>();
+const busyEditors = new WeakSet<HTMLElement>();
 let openMenu: HTMLElement | undefined;
 let menuSequence = 0;
 
@@ -37,6 +39,10 @@ function toolbarOf(editor: HTMLElement): HTMLElement | null {
 }
 
 function insertIntoToolbar(host: HTMLElement, bar: HTMLElement) {
+  // Defensive: the host must never contain more than one button.
+  host.querySelectorAll(":scope .xcompose-bar").forEach(el => {
+    if (el !== bar) el.remove();
+  });
   const submit = host.querySelector<HTMLElement>(
     '[data-testid="tweetButtonInline"], [data-testid="tweetButton"]'
   );
@@ -66,6 +72,11 @@ function scan(enabled: string[]) {
     if (!editors.has(editor) || !editor.isConnected) removeMount(editor);
   }
 
+  // One button per toolbar: two editors can resolve to the same host because
+  // toolbarOf() searches whole ancestor subtrees. First editor in DOM order wins;
+  // insertIntoToolbar() also dedupes, so a pass never leaves two buttons behind.
+  const usedHosts = new Set<HTMLElement>();
+
   for (const editor of editors) {
     const host = toolbarOf(editor);
     const existing = mounts.get(editor);
@@ -80,13 +91,23 @@ function scan(enabled: string[]) {
       removeMount(editor);
       continue;
     }
-    if (existing?.bar.isConnected && existing.host === host && existing.signature === signature)
+    if (usedHosts.has(host)) {
+      removeMount(editor);
       continue;
+    }
+    if (existing?.bar.isConnected && existing.host.isConnected && existing.host === host) {
+      if (existing.signature === signature) {
+        usedHosts.add(host);
+        continue;
+      }
+      removeMount(editor);
+    }
 
     removeMount(editor);
     const mount = buildBar(editor, enabled);
     insertIntoToolbar(host, mount.bar);
     mounts.set(editor, { ...mount, host, signature });
+    usedHosts.add(host);
   }
 }
 
@@ -96,7 +117,9 @@ function actionBtn(editor: HTMLElement, bar: HTMLElement, action: ActionMeta): H
   btn.className = "xcompose-dropdown-item";
   btn.dataset.action = action.id;
   btn.title = action.label;
-  btn.innerHTML = `${icon(action.icon)}<span>${action.label}</span>`;
+  const label = document.createElement("span");
+  label.textContent = action.label;
+  btn.append(icon(action.icon), label);
   btn.addEventListener("click", () => {
     if (openMenu) {
       openMenu.hidden = true;
@@ -118,7 +141,7 @@ function buildBar(editor: HTMLElement, enabled: string[]): Pick<Mount, "bar" | "
   trigger.className = "xcompose-trigger";
   trigger.setAttribute("aria-label", "Open XCompose");
   trigger.setAttribute("aria-expanded", "false");
-  trigger.innerHTML = icon("spell-check");
+  trigger.append(icon("spell-check"));
   bar.append(trigger);
 
   const instance = ++menuSequence;
@@ -135,14 +158,30 @@ function buildBar(editor: HTMLElement, enabled: string[]): Pick<Mount, "bar" | "
   undo.className = "xcompose-dropdown-item xcompose-undo";
   undo.title = "Undo";
   undo.hidden = true;
-  undo.innerHTML = `${icon("undo")}<span>Undo</span>`;
+  undo.append(icon("undo"), document.createTextNode("Undo"));
   undo.addEventListener("click", () => {
     const previous = bar.dataset.prev;
-    if (previous !== undefined) {
-      setText(editor, previous);
-      undo.hidden = true;
-      setStatus(bar, "Undone");
-    }
+    if (previous === undefined || busyEditors.has(editor)) return;
+    if (document.documentElement.dataset.xcomposeOwner !== OWNER) return;
+    busyEditors.add(editor);
+    undo.disabled = true;
+    void (async () => {
+      try {
+        const applied = await setText(editor, previous);
+        if (applied) {
+          undo.hidden = true;
+          delete bar.dataset.prev;
+          setStatus(bar, "Undone");
+        } else {
+          setStatus(bar, "Undo failed");
+        }
+      } catch {
+        setStatus(bar, "Undo failed");
+      } finally {
+        busyEditors.delete(editor);
+        undo.disabled = false;
+      }
+    })();
   });
 
   const divider = document.createElement("div");
@@ -150,7 +189,7 @@ function buildBar(editor: HTMLElement, enabled: string[]): Pick<Mount, "bar" | "
   const settings = document.createElement("button");
   settings.type = "button";
   settings.className = "xcompose-dropdown-item";
-  settings.innerHTML = `${icon("settings")}<span>Settings</span>`;
+  settings.append(icon("settings"), document.createTextNode("Settings"));
   settings.addEventListener("click", () => {
     menu.hidden = true;
     openMenu = undefined;
@@ -232,31 +271,15 @@ function setStatus(bar: HTMLElement, text: string) {
   if (tooltip) tooltip.textContent = text ? `XCompose · ${text}` : "XCompose";
 }
 
-function setText(editor: HTMLElement, text: string) {
-  editor.focus();
-  const selection = getSelection();
-  if (!selection) return;
-  const range = document.createRange();
-  range.selectNodeContents(editor);
-  selection.removeAllRanges();
-  selection.addRange(range);
-  if (!document.execCommand("insertText", false, text)) {
-    const data = new DataTransfer();
-    data.setData("text/plain", text);
-    editor.dispatchEvent(
-      new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true })
-    );
-  }
-}
-
 async function run(editor: HTMLElement, bar: HTMLElement, actionId: string) {
-  if (bar.classList.contains("busy")) return;
+  if (document.documentElement.dataset.xcomposeOwner !== OWNER || busyEditors.has(editor)) return;
   const trigger = bar.querySelector<HTMLButtonElement>(".xcompose-trigger");
-  const original = editor.innerText;
+  const original = getText(editor);
   if (!original.trim()) {
     setStatus(bar, "Empty draft");
     return;
   }
+  busyEditors.add(editor);
   bar.classList.add("busy");
   if (trigger) trigger.disabled = true;
   setStatus(bar, "Working…");
@@ -268,21 +291,33 @@ async function run(editor: HTMLElement, bar: HTMLElement, actionId: string) {
     });
     if (!response.ok) throw new Error(response.error);
     const result = String(response.result).trim();
-    if (!editor.isConnected || editor.innerText !== original) {
+    if (
+      document.documentElement.dataset.xcomposeOwner !== OWNER ||
+      !editor.isConnected ||
+      getText(editor) !== original
+    ) {
       setStatus(bar, "Draft changed");
     } else if (result && result !== original) {
       bar.dataset.prev = original;
       const menu = document.getElementById(bar.dataset.menuId ?? "");
       const undo = menu?.querySelector<HTMLElement>(".xcompose-undo");
-      if (undo) undo.hidden = false;
-      setText(editor, result);
-      setStatus(bar, "Applied");
+      const applied = await setText(editor, result);
+      if (!applied) {
+        // A handler may partially replace a draft before failing verification.
+        // Keep the original available for recovery.
+        if (undo) undo.hidden = false;
+        setStatus(bar, "Apply failed");
+      } else {
+        if (undo) undo.hidden = false;
+        setStatus(bar, "Applied");
+      }
     } else {
       setStatus(bar, "No change");
     }
   } catch (error) {
     setStatus(bar, (error instanceof Error ? error.message : String(error)).slice(0, 60));
   } finally {
+    busyEditors.delete(editor);
     bar.classList.remove("busy");
     if (trigger) trigger.disabled = false;
   }
@@ -342,6 +377,7 @@ window.addEventListener("resize", () => {
 });
 
 document.addEventListener("keydown", event => {
+  if (document.documentElement.dataset.xcomposeOwner !== OWNER) return;
   if (!(event.ctrlKey || event.metaKey) || !event.shiftKey || event.key !== "G") return;
   const editor = document.activeElement;
   if (!(editor instanceof HTMLElement) || !editor.matches(SELECTOR)) return;

@@ -1,5 +1,5 @@
 import { PROVIDERS, getConfig } from "./lib/config.js";
-import { enhance } from "./lib/llm.js";
+import { enhance, getGoSessionId } from "./lib/llm.js";
 
 const providerOrigin = (provider: "openrouter" | "opencode-go") =>
   provider === "openrouter" ? "https://openrouter.ai/*" : "https://opencode.ai/*";
@@ -23,7 +23,10 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     }
     if (msg.type === "get-go-models") {
       await requireProviderPermission("opencode-go");
-      const response = await fetch(`${PROVIDERS["opencode-go"].baseUrl}/models`);
+      const response = await fetch(`${PROVIDERS["opencode-go"].baseUrl}/models`, {
+        headers: { "x-opencode-session": await getGoSessionId() },
+        signal: AbortSignal.timeout(10_000),
+      });
       if (!response.ok) throw new Error(`Model discovery failed: ${response.status}`);
       const payload = (await response.json()) as { data?: { id?: unknown }[] };
       return {

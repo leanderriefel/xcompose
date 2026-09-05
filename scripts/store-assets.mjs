@@ -22,7 +22,20 @@ mkdirSync(resolve("icons"), { recursive: true });
 function exportPng(input, filter, outputFile) {
   const result = spawnSync(
     "ffmpeg",
-    ["-loglevel", "error", "-y", "-i", input, "-vf", filter, "-frames:v", "1", "-update", "1", outputFile],
+    [
+      "-loglevel",
+      "error",
+      "-y",
+      "-i",
+      input,
+      "-vf",
+      filter,
+      "-frames:v",
+      "1",
+      "-update",
+      "1",
+      outputFile,
+    ],
     { stdio: "inherit" }
   );
   if (result.status !== 0) throw new Error(`Could not create ${outputFile}`);

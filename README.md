@@ -33,6 +33,8 @@ pnpm dev            # vite dev server + HMR
 pnpm build          # → dist/        (Chrome: load unpacked)
 pnpm build:firefox  # → dist-firefox (about:debugging in Firefox/Zen)
 pnpm check          # typecheck + lint + format
+pnpm test           # regression tests
+pnpm release patch  # bump + verify + package both stores and review sources
 pnpm zip            # store zip (after build)
 ```
 
@@ -43,6 +45,8 @@ pnpm zip            # store zip (after build)
 | Vite 8 + @crxjs/vite-plugin | bundling, HMR, manifest rewrite |
 | SolidJS | popup + options UI (~7 kB runtime) |
 | AI SDK 7 (`ai`) | one `generateText` for every provider, lazy-loaded chunk |
+
+See [RELEASING.md](RELEASING.md) for store submissions and automated GitHub releases.
 
 ## Structure
 
