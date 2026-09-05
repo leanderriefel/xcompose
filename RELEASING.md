@@ -6,6 +6,7 @@ Use Node.js 24 and pnpm 10.15.1 (the version in package.json).
 
 ```sh
 pnpm install --frozen-lockfile
+pnpm exec playwright install firefox chromium
 pnpm release patch
 ```
 
@@ -49,6 +50,8 @@ pnpm build:firefox
 The output is `dist-firefox/`. Build from these sources, not the Chrome ZIP. The source uses TypeScript, SolidJS, and Vite with CRXJS. No credentials, external service, generated artwork, or environment file is needed to build. Run `pnpm check` and `pnpm test` for the additional checks.
 
 ## Local composer playground
+
+`pnpm test:browser` runs the production editor helper in temporary Firefox and Chromium extensions against real Draft.js page editors, checking both DOM text and React EditorState. These tests run in CI before packaging or publishing. They use isolated profiles and local test text; no login or API key is required. Install browser binaries once with `pnpm exec playwright install firefox chromium` (add `--with-deps` on Linux). To reproduce the Firefox 0.2.1 regression from a Git checkout, run `node scripts/test-browser.mjs --baseline`; this is expected to fail.
 
 Run `pnpm test:manual` and open `http://127.0.0.1:5174/tests/composer.html`. This runs the real Draft.js library and production XCompose toolbar against local mock provider responses. It checks DOM text against EditorState after repeated replacements, undo, blank lines, and emoji. No API keys are needed. Also type after applying and undoing to check the composer remains editable.
 

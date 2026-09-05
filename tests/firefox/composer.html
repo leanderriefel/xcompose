@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Firefox content-script regression</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      addEventListener("error", event =>
+        fetch("/firefox-test-result", {
+          method: "POST",
+          body: JSON.stringify({ error: event.message }),
+        })
+      );
+    </script>
+    <script type="module" src="./page.mjs"></script>
+  </body>
+</html>

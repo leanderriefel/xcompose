@@ -34,6 +34,47 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("draft replacement", () => {
+  it("preserves the caret set by Draft.js inside its text leaf", async () => {
+    editor.addEventListener("paste", event => {
+      event.preventDefault();
+      editor.textContent = "New";
+      getSelection()!.collapse(editor.firstChild, 3);
+    });
+    expect(await setText(editor, "New")).toBe(true);
+    expect(getSelection()!.anchorNode).toBe(editor.firstChild);
+    expect(getSelection()!.anchorOffset).toBe(3);
+  });
+  it("populates Firefox's event store when the constructor ignores clipboardData", async () => {
+    vi.stubGlobal(
+      "ClipboardEvent",
+      class extends Event {
+        clipboardData = new DataTransfer();
+      }
+    );
+    editor.addEventListener("paste", event => {
+      event.preventDefault();
+      editor.textContent = (event as ClipboardEvent).clipboardData!.getData("text/plain");
+    });
+    expect(await setText(editor, "Firefox replacement")).toBe(true);
+    expect(editor.textContent).toBe("Firefox replacement");
+    expect(document.execCommand).not.toHaveBeenCalled();
+  });
+  it("populates the page-visible Firefox clipboard store across Xray wrappers", async () => {
+    vi.stubGlobal(
+      "ClipboardEvent",
+      class extends Event {
+        clipboardData = new DataTransfer();
+        wrappedJSObject = { clipboardData: new DataTransfer() };
+      }
+    );
+    editor.addEventListener("paste", event => {
+      event.preventDefault();
+      const pageEvent = (event as unknown as { wrappedJSObject: ClipboardEvent }).wrappedJSObject;
+      editor.textContent = pageEvent.clipboardData!.getData("text/plain");
+    });
+    expect(await setText(editor, "Page-visible replacement")).toBe(true);
+    expect(document.execCommand).not.toHaveBeenCalled();
+  });
   it("compares DOM ranges when Chrome renders extra newlines in Selection text", async () => {
     const selection = getSelection()!;
     const renderedText = vi.spyOn(selection, "toString").mockReturnValue("Original\n");

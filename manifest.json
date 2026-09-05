@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "XCompose",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "AI buttons for the X compose box. Bring your own key.",
   "permissions": [
     "storage"

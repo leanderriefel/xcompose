@@ -49,13 +49,20 @@ export async function setText(editor: HTMLElement, text: string): Promise<boolea
   try {
     const data = new DataTransfer();
     data.setData("text/plain", text);
-    handled = !editor.dispatchEvent(
-      new ClipboardEvent("paste", {
-        clipboardData: data,
-        bubbles: true,
-        cancelable: true,
-      })
-    );
+    const paste = new ClipboardEvent("paste", {
+      clipboardData: data,
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+    });
+    // Firefox ignores ClipboardEventInit.clipboardData. Populate the event's
+    // actual store, using its page-visible wrapper across the content-script
+    // boundary (Mozilla bug 1654724). Never access the system clipboard.
+    const pagePaste =
+      (paste as ClipboardEvent & { wrappedJSObject?: ClipboardEvent }).wrappedJSObject ?? paste;
+    pagePaste.clipboardData?.setData("text/plain", text);
+    if (pagePaste.clipboardData?.getData("text/plain") !== text) return false;
+    handled = !editor.dispatchEvent(paste);
   } catch {
     // Some browsers cannot construct clipboard events.
   }
@@ -80,7 +87,9 @@ export async function setText(editor: HTMLElement, text: string): Promise<boolea
     }
   }
   if (!editor.isConnected || getText(editor) !== text) return false;
-  if (selectedEditor(editor)) {
+  // Draft.js places its own caret after pasting. Moving it to the outer editor
+  // boundary loses the leaf offset Firefox needs for the next native input.
+  if (selectedEditor(editor) && !editor.closest(".DraftEditor-root")) {
     const end = document.createRange();
     end.selectNodeContents(editor);
     end.collapse(false);

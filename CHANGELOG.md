@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2 — 2026-09-05
+
+- Fix Firefox showing "Apply failed" after selecting the draft: populate the paste event's page-visible clipboard data.
+- Preserve Draft.js's caret after replacement so subsequent typing works correctly in Firefox.
+- Add real Firefox and Chromium content-script regression tests to CI and release verification, covering repeated replacement, Undo, multiline text, generation focus, and continued editing.
+
 ## 0.2.1 — 2026-09-05
 
 - Replace drafts through the editor's paste handler to prevent duplicated text and frozen composers.
